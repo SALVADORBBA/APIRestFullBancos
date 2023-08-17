@@ -37,29 +37,9 @@ Obtenha o link para a impressão do boleto gerado, pronto para ser apresentado a
 ## Autenticação
 
 Para utilizar esta API, é necessário autenticar-se através de credenciais fornecidas pelo Itaú. As credenciais devem ser incluídas nos cabeçalhos das requisições.
-
-## Exemplos de Uso
-
-```json
-POST /api/itau/boleto
-{
-  "valor": 150.50,
-  "vencimento": "2023-09-30",
-  "beneficiario_id": 123,
-  "outros_parametros": "..."
-}
-
-PUT /api/itau/boleto/456
-{
-  "vencimento": "2023-10-10",
-  "outros_parametros": "..."
-}
-
-GET /api/itau/boleto/456/imprimir
-
-
-Contribuição
-Agradecemos por considerar contribuir para a API do Itaú! O guia de contribuição pode ser encontrado na documentação da API.
+ 
+**Contribuição:**
+ Agradecemos por considerar contribuir para a API do Itaú! O guia de contribuição pode ser encontrado na documentação da API.
 
 Código de Conduta
 Para garantir que a comunidade da API do Itaú seja acolhedora para todos, por favor, revise e siga o Código de Conduta.
