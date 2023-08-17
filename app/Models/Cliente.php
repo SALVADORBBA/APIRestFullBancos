@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MillCliente extends Model
+class Cliente extends Model
 {
     protected $table = 'cliente';
     protected $fillable = [

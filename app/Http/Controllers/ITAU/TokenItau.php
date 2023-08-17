@@ -24,7 +24,7 @@ class TokenItau extends Controller
         $certificado_a1,
         $senha
     ) {
-
+        // Cria um UUID (Identificador Único Universal) baseado na versão 4.
         $x_itau_flowID = ClassGenerica::CreateUuid(2);
         $x_itau_correlationID = ClassGenerica::CreateUuid(1);
 

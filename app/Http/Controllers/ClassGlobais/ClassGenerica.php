@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ClassGlobais;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cliente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
@@ -202,13 +203,13 @@ class ClassGenerica extends Controller
     public static function CobrancaJSON($parametros_id, $resposerCobranca)
     {
 
-        $ParamentrosBanco = DB::table('mill_parametros_bancos')
+        $ParamentrosBanco = DB::table('parametros_bancos')
             ->where("id", $parametros_id)->first();
 
-        $Beneficiario = DB::table('mill_beneficiario')
+        $Beneficiario = DB::table('beneficiario')
             ->where("id", $ParamentrosBanco->beneficiario_id)->first();
 
-        $Banco = DB::table('mill_bancos_modulos')
+        $Banco = DB::table('bancos_modulos')
             ->where("id", $ParamentrosBanco->bancos_modulos_id)->first();
         $STD = new stdClass();
         $STD->Cobranca = $resposerCobranca;
@@ -313,6 +314,13 @@ class ClassGenerica extends Controller
         return array($primeiroNome, $restante);
     }
 
+
+    /**
+     * Cria um UUID (Identificador Único Universal) baseado na versão 4.
+     *
+     * @param int $model O identificador do modelo.
+     * @return string O UUID gerado.
+     */
     public static function CreateUuid($model)
     {
 
@@ -328,10 +336,10 @@ class ClassGenerica extends Controller
         return $uuid;
     }
 
-    public static function BinarioFilesPDF($id, $system_unit_id, $mill_parametros_bancos_id, $mill_beneficiario_id, $linhaDigitavel)
+    public static function BinarioFilesPDF($id, $system_unit_id, $parametros_bancos_id, $beneficiario_id, $linhaDigitavel)
     {
 
-        // $pastaDestino = "documentos/pdf/sicredi/boleto/{$system_unit_id}/{$mill_parametros_bancos_id}/{$mill_beneficiario_id}/";
+        // $pastaDestino = "documentos/pdf/sicredi/boleto/{$system_unit_id}/{$parametros_bancos_id}/{$beneficiario_id}/";
         // if (!is_dir($pastaDestino)) {
         //     mkdir($pastaDestino, 0777, true);
         // }
@@ -353,9 +361,9 @@ class ClassGenerica extends Controller
         // // Preencher os campos do evento
         // $evento->linhaDigitavel = $linhaDigitavel;
         // $evento->caminho_pdf = $nomeArquivo;
-        // $evento->mill_parametros_bancos_id = $mill_parametros_bancos_id;
+        // $evento->parametros_bancos_id = $parametros_bancos_id;
         // $evento->system_unit_id = $system_unit_id;
-        // $evento->mill_cobranca_titulo_id = $id;
+        // $evento->cobranca_titulo_id = $id;
         // $evento->mensagem = 'Gerando PDF Boleto';
         // $evento->codigo = 300;
 
