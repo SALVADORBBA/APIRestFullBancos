@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MillCobrancaTitulo extends Model
 {
-    protected $table = 'mill_cobranca_titulo';
+    protected $table = 'cobranca_titulo';
     protected $primaryKey = 'id';
     public $timestamps = false;
 

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MillCliente extends Model
 {
-    protected $table = 'mill_cliente';
+    protected $table = 'cliente';
     protected $fillable = [
         'documento',
         'nome',

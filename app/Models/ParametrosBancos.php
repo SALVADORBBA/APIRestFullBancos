@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class MillParametrosBancos extends Model
 {
     use HasFactory;
-    protected $table = 'mill_parametros_bancos';
+    protected $table = 'parametros_bancos';
 
     protected $hidden = ['certiticado_base64', 'senha'];
 }

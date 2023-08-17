@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MillEventosBoletos extends Model
 {
-    protected $table = 'mill_eventos_boletos';
+    protected $table = 'eventos_boletos';
 
     protected $fillable = [
         'linhaDigitavel',

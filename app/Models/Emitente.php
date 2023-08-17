@@ -9,7 +9,7 @@ class MillEmitente extends Model
 {
     use HasFactory;
 
-    protected $table = 'mill_beneficiario';
+    protected $table = 'beneficiario';
 
     protected $fillable = [
         'cnpj',

@@ -9,7 +9,7 @@ class TokenItau extends Controller
 {
     /**
      * Obtém um token de acesso do serviço de autenticação OAuth 2.0 do Itaú usando o fluxo de credenciais do cliente.
-     *
+     *  TokenItau;;itau
      * @param string $client_id O ID do cliente fornecido pelo Itaú para autenticação.
      * @param string $client_secret O segredo do cliente fornecido pelo Itaú para autenticação.
      * @param string $certificado_a1 O certificado decodificado no formato P12 para autenticação TLS mútua.
@@ -38,7 +38,7 @@ class TokenItau extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => 'grant_type=client_credentials&client_id=' . $client_id . '&client_secret=' . $clientSecret,
+            CURLOPT_POSTFIELDS => 'grant_type=client_credentials&client_id=' . $client_id . '&client_secret=' . $client_secret,
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/x-www-form-urlencoded',
                 'x-itau-flowID: 1',
