@@ -12,7 +12,7 @@ Crie um novo boleto para um beneficiário com informações como valor, vencimen
 
 **Parâmetros:**
 - `valor` (decimal): O valor do boleto.
-- `vencimento` (data): A data de vencimento do boleto.
+- `data_vencimento` (data): A data de vencimento do boleto.
 - `beneficiario_id` (inteiro): O ID do beneficiário.
 - Outros parâmetros relevantes.
 
@@ -23,7 +23,7 @@ Atualize os detalhes de um boleto existente, como data de vencimento, valor ou i
 
 **Parâmetros:**
 - `id` (inteiro): O ID único do boleto.
-- `vencimento` (data): A nova data de vencimento do boleto.
+- `data_vencimento` (data): A nova data de vencimento do boleto.
 - Outros parâmetros para atualização.
 
 ### Impressão de Boleto
@@ -37,38 +37,18 @@ Obtenha o link para a impressão do boleto gerado, pronto para ser apresentado a
 ## Autenticação
 
 Para utilizar esta API, é necessário autenticar-se através de credenciais fornecidas pelo Itaú. As credenciais devem ser incluídas nos cabeçalhos das requisições.
-
-## Exemplos de Uso
-
-```json
-POST /api/itau/boleto
-{
-  "valor": 150.50,
-  "vencimento": "2023-09-30",
-  "beneficiario_id": 123,
-  "outros_parametros": "..."
-}
-
-PUT /api/itau/boleto/456
-{
-  "vencimento": "2023-10-10",
-  "outros_parametros": "..."
-}
-
-GET /api/itau/boleto/456/imprimir
-
-
-Contribuição
-Agradecemos por considerar contribuir para a API do Itaú! O guia de contribuição pode ser encontrado na documentação da API.
+ 
+**Contribuição:**
+ Agradecemos por considerar contribuir para a API do Itaú! O guia de contribuição pode ser encontrado na documentação da API.
 
 Código de Conduta
 Para garantir que a comunidade da API do Itaú seja acolhedora para todos, por favor, revise e siga o Código de Conduta.
 
 Vulnerabilidades de Segurança
-Se você descobrir uma vulnerabilidade de segurança na API do Itaú, por favor, envie um e-mail para equipe@itau.com. Todas as vulnerabilidades de segurança serão tratadas prontamente.
+Se você descobrir uma vulnerabilidade de segurança na API , por favor, envie um e-mail para salvadorbba@gmail.com. Todas as vulnerabilidades de segurança serão tratadas prontamente.
 
 Licença
 A API do Itaú é um software de código aberto licenciado sob a licença MIT.
 
 Autor: Rubens dos Santos
-Contato: sanvadorbba@gmail.com
+Contato: salvadorbba@gmail.com
