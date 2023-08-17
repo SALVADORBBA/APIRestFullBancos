@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\ITAU;
 
+use App\Http\Controllers\ClassGlobais\ClassGenerica;
 use App\Http\Controllers\ClassGlobais\ControllerMaster;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -18,6 +19,8 @@ class ControllerCreate extends Controller
     public function store(Request $request)
 
     {
+
+
         return  ControllerMaster::GetCreate($request->cobranca_id);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\ITAU;
 
+use App\Http\Controllers\ClassGlobais\ClassGenerica;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -23,6 +24,11 @@ class TokenItau extends Controller
         $certificado_a1,
         $senha
     ) {
+
+        $x_itau_flowID = ClassGenerica::CreateUuid(2);
+        $x_itau_correlationID = ClassGenerica::CreateUuid(1);
+
+
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -41,8 +47,8 @@ class TokenItau extends Controller
             CURLOPT_POSTFIELDS => 'grant_type=client_credentials&client_id=' . $client_id . '&client_secret=' . $client_secret,
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/x-www-form-urlencoded',
-                'x-itau-flowID: 1',
-                'x-itau-correlationID: 2',
+                'x-itau-flowID: ' . $x_itau_flowID,
+                'x-itau-correlationID: ' . $x_itau_correlationID,
             ),
         ));
 
