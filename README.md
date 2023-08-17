@@ -12,7 +12,7 @@ Crie um novo boleto para um beneficiário com informações como valor, vencimen
 
 **Parâmetros:**
 - `valor` (decimal): O valor do boleto.
-- `vencimento` (data): A data de vencimento do boleto.
+- `data_vencimento` (data): A data de vencimento do boleto.
 - `beneficiario_id` (inteiro): O ID do beneficiário.
 - Outros parâmetros relevantes.
 
@@ -23,7 +23,7 @@ Atualize os detalhes de um boleto existente, como data de vencimento, valor ou i
 
 **Parâmetros:**
 - `id` (inteiro): O ID único do boleto.
-- `vencimento` (data): A nova data de vencimento do boleto.
+- `data_vencimento` (data): A nova data de vencimento do boleto.
 - Outros parâmetros para atualização.
 
 ### Impressão de Boleto
@@ -45,10 +45,10 @@ Código de Conduta
 Para garantir que a comunidade da API do Itaú seja acolhedora para todos, por favor, revise e siga o Código de Conduta.
 
 Vulnerabilidades de Segurança
-Se você descobrir uma vulnerabilidade de segurança na API do Itaú, por favor, envie um e-mail para equipe@itau.com. Todas as vulnerabilidades de segurança serão tratadas prontamente.
+Se você descobrir uma vulnerabilidade de segurança na API , por favor, envie um e-mail para salvadorbba@gmail.com. Todas as vulnerabilidades de segurança serão tratadas prontamente.
 
 Licença
 A API do Itaú é um software de código aberto licenciado sob a licença MIT.
 
 Autor: Rubens dos Santos
-Contato: sanvadorbba@gmail.com
+Contato: salvadorbba@gmail.com
