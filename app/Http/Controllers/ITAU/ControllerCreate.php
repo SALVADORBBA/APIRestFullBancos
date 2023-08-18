@@ -7,17 +7,16 @@ use App\Http\Controllers\ClassGlobais\ControllerMaster;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-/**
- * Arquivo: ControllerCreate.php
- * Autor: Rubens do Santos
- * Contato: salvadorbba@gmail.com
- * Data: data_de_criacao
- * Descrição: Descrição breve do propósito deste arquivo.
- */
+
 class ControllerCreate extends Controller
 {
 
     /**
+     * Arquivo: ControllerCreate.php
+     * Autor: Rubens do Santos
+     * Contato: salvadorbba@gmail.com
+     * Data: data_de_criacao
+     * Descrição: Descrição breve do propósito deste arquivo.
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

@@ -68,21 +68,13 @@ class ControllerCreateCobranca extends Controller
             );
         } else {
 
-
-
-
-
             $cobrancaTitulo = new CobrancaTitulo();
             // Preencha os atributos do modelo com base nos dados recebidos do formulário
             $cobrancaTitulo->beneficiario_id = $Beneficiario->id;
-
             $cobrancaTitulo->parametros_bancos_id = $ParametrosBancos->id;
-
             $cobrancaTitulo->cliente_id =   $Cliente->id;
-
             $cobrancaTitulo->valor = $request->valor;
             $cobrancaTitulo->DataDoProces = date('Y-m-d H:i:s');
-
             $cobrancaTitulo->data_vencimento = $request->data_vencimento;
             $cobrancaTitulo->emissao_tipo = 1; /// tipo 1 = boletos simples 2 carne
             $cobrancaTitulo->bancos_modulos_id = $ParametrosBancos->bancos_modulos_id;
@@ -93,14 +85,6 @@ class ControllerCreateCobranca extends Controller
             //   $cobrancaTitulo->seunumero = $ultimoNumero;
             // Salve o novo registro no banco de dados
             $cobrancaTitulo->save();
-
-
-
-
-
-
-
-
 
 
 

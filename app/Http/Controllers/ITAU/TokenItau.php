@@ -7,16 +7,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 
-/**
- * Arquivo: TokenItau.php
- * Autor: Rubens do Santos
- * Contato: salvadorbba@gmail.com
- * Data: data_de_criacao
- * Descrição: Descrição breve do propósito deste arquivo.
- */
+
 class TokenItau extends Controller
 {
+
+
     /**
+     * Arquivo: TokenItau.php
+     * Autor: Rubens do Santos
+     * Contato: salvadorbba@gmail.com
+     * Data: data_de_criacao
+     * Descrição: Descrição breve do propósito deste arquivo.
+  
      * Obtém um token de acesso do serviço de autenticação OAuth 2.0 do Itaú usando o fluxo de credenciais do cliente.
      *  TokenItau;;itau
      * @param string $client_id O ID do cliente fornecido pelo Itaú para autenticação.

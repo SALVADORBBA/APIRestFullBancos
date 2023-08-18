@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Arquivo: ControleMeuNumeroServices.php
- * Autor: Rubens do Santos
- * Contato: salvadorbba@gmail.com
- * Data: data_de_criacao
- * Descrição: Descrição breve do propósito deste arquivo.
- */
 
 
 namespace App\Http\Controllers\ClassGlobais;
@@ -18,6 +11,12 @@ use Illuminate\Http\Request;
 class ControleMeuNumeroServices extends Controller
 {
     /**
+     * Arquivo: ControleMeuNumeroServices.php
+     * Autor: Rubens do Santos
+     * Contato: salvadorbba@gmail.com
+     * Data: data_de_criacao
+     * Descrição: Descrição breve do propósito deste arquivo.
+ 
      * Verifica e atualiza o número de controle com base nos parâmetros fornecidos.
      *
      * @param int $BancosId ID do parâmetro de banco
