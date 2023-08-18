@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Arquivo: ControllerCreateCobranca.php
- * Autor: Rubens do Santos
- * Contato: salvadorbba@gmail.com
- * Data: data_de_criacao
- * Descrição: Descrição breve do propósito deste arquivo.
- */
 
 namespace App\Http\Controllers;
 
@@ -18,6 +11,17 @@ use Illuminate\Support\Facades\Validator;
 
 class ControllerCreateCobranca extends Controller
 {
+
+
+    /**
+     * Arquivo: ControllerCreateCobranca.php
+     * Autor: Rubens do Santos
+     * Contato: salvadorbba@gmail.com
+     * Data: data_de_criacao
+     * Descrição: Descrição breve do propósito deste arquivo.
+     */
+
+
 
     /**
      * Show the form for creating a new resource.
