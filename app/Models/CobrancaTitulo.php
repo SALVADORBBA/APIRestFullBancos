@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MillCobrancaTitulo extends Model
+class CobrancaTitulo extends Model
 {
     protected $table = 'cobranca_titulo';
     protected $primaryKey = 'id';

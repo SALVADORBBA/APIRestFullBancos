@@ -6,6 +6,7 @@ use App\Http\Controllers\ClassGlobais\ClassGenerica;
 use App\Http\Controllers\ClassGlobais\ControllerMaster;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
 /**
  * Arquivo: ControllerCreate.php
  * Autor: Rubens do Santos
@@ -27,13 +28,13 @@ class ControllerCreate extends Controller
     {
 
 
-      $retorno= ControllerMaster::GetCreate($request->cobranca_id);
+        return      $retorno = ControllerMaster::GetCreate($request->cobranca_id);
 
 
         $data = new stdClass();
 
         $data->data = new stdClass();
-        $data->data->etapa_processo_boleto =$request->etapa_processo_boleto ;
+        $data->data->etapa_processo_boleto = $request->etapa_processo_boleto;
         $data->data->codigo_canal_operacao = "API";
 
         $data->data->beneficiario = new stdClass();
@@ -57,16 +58,14 @@ class ControllerCreate extends Controller
         $data->data->dado_boleto->pagador->pessoa->tipo_pessoa = new stdClass();
         if (strlen($result->documento) === 14) {
             $data->data->dado_boleto->pagador->pessoa->tipo_pessoa->codigo_tipo_pessoa = "J";
-                 $data->data->dado_boleto->pagador->pessoa->tipo_pessoa->numero_cadastro_nacional_pessoa_juridica = $result->documento;
-    
-
+            $data->data->dado_boleto->pagador->pessoa->tipo_pessoa->numero_cadastro_nacional_pessoa_juridica = $result->documento;
         } else {
             $data->data->dado_boleto->pagador->pessoa->tipo_pessoa->codigo_tipo_pessoa = "F";
-        $data->data->dado_boleto->pagador->pessoa->tipo_pessoa->numero_cadastro_pessoa_fisica = $result->documento;
+            $data->data->dado_boleto->pagador->pessoa->tipo_pessoa->numero_cadastro_pessoa_fisica = $result->documento;
         }
 
         $endereco = MillFunctionsClass::limitarTexto($result->endereco, 40) . MillFunctionsClass::limitarTexto($result->numero_cliente, 5);
-     
+
         $data->data->dado_boleto->pagador->endereco = new stdClass();
         $data->data->dado_boleto->pagador->endereco->nome_logradouro = $endereco;
         $data->data->dado_boleto->pagador->endereco->nome_bairro = $result->bairro;
@@ -83,19 +82,19 @@ class ControllerCreate extends Controller
         $dados_individuais_boleto->texto_seu_numero = "2";
         $data->data->dado_boleto->dados_individuais_boleto[] = $dados_individuais_boleto;
 
-    
+
         $data->data->dado_boleto->instrucao_cobranca = array();
         $instrucao_cobranca = new stdClass();
         $instrucao_cobranca->codigo_instrucao_cobranca = "4";
-   
+
         $data->data->dado_boleto->desconto_expresso = false;
- 
+
 
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://api.itau.com.br/cash_management/v2/boletos',
-         CURLOPT_SSLCERTTYPE => 'P12',
+            CURLOPT_SSLCERTTYPE => 'P12',
             CURLOPT_SSLCERT =>  $certificado_real,
             CURLOPT_SSLCERTPASSWD => $obj->senha,
             CURLOPT_RETURNTRANSFER => true,
@@ -107,9 +106,9 @@ class ControllerCreate extends Controller
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => json_encode($data),
             CURLOPT_HTTPHEADER => array(
-                'x-itau-apikey: ' . $obj->client_id ,
-                'x-itau-correlationID: '.   $x_itau_correlationID,
-                'x-itau-flowID: '. $x_itau_flowID,
+                'x-itau-apikey: ' . $obj->client_id,
+                'x-itau-correlationID: ' .   $x_itau_correlationID,
+                'x-itau-flowID: ' . $x_itau_flowID,
                 'Content-Type: application/json',
                 'Authorization: Bearer ' . $TokenItau,
             ),
@@ -159,44 +158,42 @@ class ControllerCreate extends Controller
             $evento->codigo = 200;
 
             $evento->save();
-            
-            $mensagemPadrao=$evento->mensagem;
+
+            $mensagemPadrao = $evento->mensagem;
             $Cobranca = MillCobrancaTitulo::find($result->id);
             if ($Cobranca) {
-                    $Cobranca->status = 'Em aberto';
-                    $Cobranca->seunumero = $numero_agregado;
-                    $Cobranca->linhadigitavel = $evento->linhaDigitavel ;
-                    $Cobranca->codigobarras = $evento->codigoBarras;
-                    $Cobranca->modelo = 1;
-                    $Cobranca->numero_generico_1 =$x_itau_correlationID;
-                    $Cobranca->numero_generico_2 =  $x_itau_flowID;
-                    $Cobranca->ambiente_emissao =    $data->data->etapa_processo_boleto ;
+                $Cobranca->status = 'Em aberto';
+                $Cobranca->seunumero = $numero_agregado;
+                $Cobranca->linhadigitavel = $evento->linhaDigitavel;
+                $Cobranca->codigobarras = $evento->codigoBarras;
+                $Cobranca->modelo = 1;
+                $Cobranca->numero_generico_1 = $x_itau_correlationID;
+                $Cobranca->numero_generico_2 =  $x_itau_flowID;
+                $Cobranca->ambiente_emissao =    $data->data->etapa_processo_boleto;
                 $Cobranca->save();
             }
-            
+
             BoletoCodePIX::store($result->id);
-            
+
             sleep(1);
-            
-                    return response()->json([
-                        'EventoBoleto' => [
-                            'codigo' => 200,
-                            'mensagem' => $mensagemPadrao,
-                            'data' => $response,
-                            'id' => $evento->id,
-                          //  'PDF'=>$GravaFilePDF
-                        ],
-                    ], 200);
-            } else {
 
-                return response()->json([
-                    'EventoBoleto' => [
-                        'codigo' => 404,
+            return response()->json([
+                'EventoBoleto' => [
+                    'codigo' => 200,
+                    'mensagem' => $mensagemPadrao,
+                    'data' => $response,
+                    'id' => $evento->id,
+                    //  'PDF'=>$GravaFilePDF
+                ],
+            ], 200);
+        } else {
 
-                    ],
-                ], 404);
+            return response()->json([
+                'EventoBoleto' => [
+                    'codigo' => 404,
 
+                ],
+            ], 404);
         }
-    }
     }
 }

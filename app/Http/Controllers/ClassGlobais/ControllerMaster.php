@@ -74,8 +74,8 @@ class ControllerMaster extends Controller
             );
 
             $ControleMeuNumeroService = new ControleMeuNumeroServices();
-            $ultimoNumero = $ControleMeuNumeroService->verificarEAtualizarNumero_itau($Response_Titulo->parametros_bancos_id, $Response_Titulo->system_unit_id);
-            $numero_agregado = str_pad($ultimoNumero, 8, '0', STR_PAD_LEFT);
+            $ultimoNumero = $ControleMeuNumeroService->verificarEAtualizarNumero_itau($Response_Titulo->parametros_bancos_id);
+            return  $numero_agregado = str_pad($ultimoNumero, 8, '0', STR_PAD_LEFT);
 
 
 
