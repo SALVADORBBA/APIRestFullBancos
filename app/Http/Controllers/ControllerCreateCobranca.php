@@ -3,8 +3,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Beneficiario;
+use App\Models\Cliente;
 use App\Models\CobrancaTitulo;
-use App\Models\MillCobrancaTitulo;
+
+use App\Models\ParametrosBancos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -15,36 +18,26 @@ class ControllerCreateCobranca extends Controller
 
 
     /**
+     
      * Arquivo: ControllerCreateCobranca.php
      * Autor: Rubens do Santos
      * Contato: salvadorbba@gmail.com
      * Data: data_de_criacao
      * Descrição: Descrição breve do propósito deste arquivo.
-     * Método para criar uma nova cobrança.
+  
+     * Método para criar um novo recurso de armazenamento.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param int $cobranca_id
      * @return \Illuminate\Http\Response
      */
 
-
     public function create(Request $request)
     {
-
         try {
+            $parametrosBancos = ParametrosBancos::find($request->parametros_bancos_id);
+            $beneficiario = Beneficiario::find($parametrosBancos->beneficiario_id);
+            $cliente = Cliente::find($request->cliente_id);
 
-            $ParametrosBancos = DB::table('parametros_bancos')->where('id', '=', $request->parametros_bancos_id)->first([
-                'modelo_id',
-                'client_secret',
-                'client_id',
-                'certificado',
-                'senha', 'client_id_bolecode', 'client_secret_bolecode', 'certificados_pix',
-                'certificados_extra', 'senha_certificado_pix', 'senha_certificado_extra',
-                'numerocontrato as id_beneficiario', 'carteira', 'id as parametros_bancos_id',
-                'system_unit_id', 'certificado_base64', 'certificado_pix_base64', 'beneficiario_id', 'bancos_modulos_id', 'id'
-            ]);
-
-            $Beneficiario = DB::table('beneficiario')->where('id', '=', $ParametrosBancos->beneficiario_id)->first();
-            $Cliente = DB::table('beneficiario')->where('id', '=', $ParametrosBancos->beneficiario_id)->first();
             $validator = Validator::make($request->all(), [
                 'cliente_id' => 'required|int',
                 'parametros_bancos_id' => 'required|int',
@@ -56,26 +49,47 @@ class ControllerCreateCobranca extends Controller
 
             if ($validator->fails()) {
                 $errors = $validator->errors();
-                return response()->json(
-                    [
-                        'Metodo' => 'POST',
-                        'Arquivo' => 'ControllerCreateCobranca',
-                        'tabela' => 'cobranca_titulo',
-                        'ListagemErros' => $errors,
-                    ],
-                    400
-                );
+                return response()->json([
+                    'Metodo' => 'POST',
+                    'Arquivo' => 'ControllerCreateCobranca',
+                    'tabela' => 'cobranca_titulo',
+                    'ListagemErros' => $errors,
+                ], 400);
             } else {
+                $bruteForce = filter_var($request->brute_force, FILTER_VALIDATE_BOOLEAN);
+
+                if ($bruteForce === false) {
+                    $existingCobranca = CobrancaTitulo::where([
+                        'beneficiario_id' => $beneficiario->id,
+                        'parametros_bancos_id' => $parametrosBancos->id,
+                        'cliente_id' => $cliente->id,
+                        'valor' => $request->valor,
+                        'data_vencimento' => $request->data_vencimento,
+                        'cobranca_id' => $request->cobranca_id,
+                        'identificacaoboletoempresa' => $request->identificacaoboletoempresa,
+                    ])->first();
+
+                    if ($existingCobranca !== null) {
+
+                        Log::info('Já existe uma cobrança com esses dados: ' . $request->all());
+                        return response()->json([
+                            'Resposta' => [
+                                'codigo' => 400,
+                                'mensagem' => 'Já existe uma cobrança com esses dados.',
+                            ],
+                        ], 400);
+                    }
+                }
 
                 $cobrancaTitulo = new CobrancaTitulo();
-                $cobrancaTitulo->beneficiario_id = $Beneficiario->id;
-                $cobrancaTitulo->parametros_bancos_id = $ParametrosBancos->id;
-                $cobrancaTitulo->cliente_id =   $Cliente->id;
+                $cobrancaTitulo->beneficiario_id = $beneficiario->id;
+                $cobrancaTitulo->parametros_bancos_id = $parametrosBancos->id;
+                $cobrancaTitulo->cliente_id = $cliente->id;
                 $cobrancaTitulo->valor = $request->valor;
-                $cobrancaTitulo->DataDoProces = date('Y-m-d H:i:s');
+                $cobrancaTitulo->DataDoProces = now();
                 $cobrancaTitulo->data_vencimento = $request->data_vencimento;
-                $cobrancaTitulo->emissao_tipo = 1; /// tipo 1 = boletos simples 2 carne
-                $cobrancaTitulo->bancos_modulos_id = $ParametrosBancos->bancos_modulos_id;
+                $cobrancaTitulo->emissao_tipo = 1;
+                $cobrancaTitulo->bancos_modulos_id = $parametrosBancos->bancos_modulos_id;
                 $cobrancaTitulo->status = 'new';
                 $cobrancaTitulo->tipo = 1;
                 $cobrancaTitulo->cobranca_id = $request->cobranca_id;
@@ -83,22 +97,19 @@ class ControllerCreateCobranca extends Controller
                 $cobrancaTitulo->save();
 
 
-
+                Log::info($cobrancaTitulo);
                 return response()->json([
-                    'EventoBoleto' => [
-                        'codigo' => 200,
-                        'data' =>  $cobrancaTitulo,
-
+                    'Cobranca' => [
+                        'data' => $cobrancaTitulo,
                     ],
-                ], 200);
+                ], 201);
             }
         } catch (\Exception $e) {
-            // Registra um erro no log e retorna uma resposta de erro
-            Log::error('Erro ao processar GetCreate: ' . $e->getMessage());
+            Log::info('Erro ao processar GetCreate: ' . $e->getMessage());
             return response()->json([
                 'Resposta' => [
                     'codigo' => 500,
-                    'mensagem' => 'Ocorreu um erro no servidor.',
+                    'mensagem' => 'Ocorreu um erro no servidor verifique o log. rota api/logs',
                 ],
             ], 500);
         }

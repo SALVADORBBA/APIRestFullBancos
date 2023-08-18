@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MillParametrosBancos extends Model
+class ParametrosBancos extends Model
 {
     use HasFactory;
     protected $table = 'parametros_bancos';

@@ -12,9 +12,9 @@ class CobrancaTitulo extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'mill_beneficiario_id',
+        'beneficiario_id',
         'system_unit_id',
-        'mill_parametros_bancos_id',
+        'parametros_bancos_id',
         'cliente_id',
         'valor',
         'data_vencimento',
