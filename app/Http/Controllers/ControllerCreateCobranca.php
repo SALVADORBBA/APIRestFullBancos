@@ -7,6 +7,7 @@ use App\Models\CobrancaTitulo;
 use App\Models\MillCobrancaTitulo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class ControllerCreateCobranca extends Controller
@@ -29,67 +30,77 @@ class ControllerCreateCobranca extends Controller
     public function create(Request $request)
     {
 
+        try {
+
+            $ParametrosBancos = DB::table('parametros_bancos')->where('id', '=', $request->parametros_bancos_id)->first([
+                'modelo_id',
+                'client_secret',
+                'client_id',
+                'certificado',
+                'senha', 'client_id_bolecode', 'client_secret_bolecode', 'certificados_pix',
+                'certificados_extra', 'senha_certificado_pix', 'senha_certificado_extra',
+                'numerocontrato as id_beneficiario', 'carteira', 'id as parametros_bancos_id',
+                'system_unit_id', 'certificado_base64', 'certificado_pix_base64', 'beneficiario_id', 'bancos_modulos_id', 'id'
+            ]);
+
+            $Beneficiario = DB::table('beneficiario')->where('id', '=', $ParametrosBancos->beneficiario_id)->first();
+            $Cliente = DB::table('beneficiario')->where('id', '=', $ParametrosBancos->beneficiario_id)->first();
+            $validator = Validator::make($request->all(), [
+                'cliente_id' => 'required|int',
+                'parametros_bancos_id' => 'required|int',
+                'valor' => 'required|numeric',
+                'data_vencimento' => 'required|date',
+                'identificacaoboletoempresa' => 'required|int',
+                'cobranca_id' => 'required|int',
+            ]);
+
+            if ($validator->fails()) {
+                $errors = $validator->errors();
+                return response()->json(
+                    [
+                        'Metodo' => 'POST',
+                        'Arquivo' => 'ControllerCreateCobranca',
+                        'tabela' => 'cobranca_titulo',
+                        'ListagemErros' => $errors,
+                    ],
+                    400
+                );
+            } else {
+
+                $cobrancaTitulo = new CobrancaTitulo();
+                $cobrancaTitulo->beneficiario_id = $Beneficiario->id;
+                $cobrancaTitulo->parametros_bancos_id = $ParametrosBancos->id;
+                $cobrancaTitulo->cliente_id =   $Cliente->id;
+                $cobrancaTitulo->valor = $request->valor;
+                $cobrancaTitulo->DataDoProces = date('Y-m-d H:i:s');
+                $cobrancaTitulo->data_vencimento = $request->data_vencimento;
+                $cobrancaTitulo->emissao_tipo = 1; /// tipo 1 = boletos simples 2 carne
+                $cobrancaTitulo->bancos_modulos_id = $ParametrosBancos->bancos_modulos_id;
+                $cobrancaTitulo->status = 'new';
+                $cobrancaTitulo->tipo = 1;
+                $cobrancaTitulo->cobranca_id = $request->cobranca_id;
+                $cobrancaTitulo->identificacaoboletoempresa = $request->identificacaoboletoempresa;
+                $cobrancaTitulo->save();
 
 
-        $ParametrosBancos = DB::table('parametros_bancos')->where('id', '=', $request->parametros_bancos_id)->first([
-            'modelo_id',
-            'client_secret',
-            'client_id',
-            'certificado',
-            'senha', 'client_id_bolecode', 'client_secret_bolecode', 'certificados_pix',
-            'certificados_extra', 'senha_certificado_pix', 'senha_certificado_extra',
-            'numerocontrato as id_beneficiario', 'carteira', 'id as parametros_bancos_id',
-            'system_unit_id', 'certificado_base64', 'certificado_pix_base64', 'beneficiario_id', 'bancos_modulos_id', 'id'
-        ]);
 
-        $Beneficiario = DB::table('beneficiario')->where('id', '=', $ParametrosBancos->beneficiario_id)->first();
-        $Cliente = DB::table('beneficiario')->where('id', '=', $ParametrosBancos->beneficiario_id)->first();
-        $validator = Validator::make($request->all(), [
-            'cliente_id' => 'required|int',
-            'parametros_bancos_id' => 'required|int',
-            'valor' => 'required|numeric',
-            'data_vencimento' => 'required|date',
-            'identificacaoboletoempresa' => 'required|int',
-            'cobranca_id' => 'required|int',
-        ]);
+                return response()->json([
+                    'EventoBoleto' => [
+                        'codigo' => 200,
+                        'data' =>  $cobrancaTitulo,
 
-        if ($validator->fails()) {
-            $errors = $validator->errors();
-            return response()->json(
-                [
-                    'Metodo' => 'POST',
-                    'Arquivo' => 'ControllerCreateCobranca',
-                    'tabela' => 'cobranca_titulo',
-                    'ListagemErros' => $errors,
-                ],
-                400
-            );
-        } else {
-
-            $cobrancaTitulo = new CobrancaTitulo();
-            $cobrancaTitulo->beneficiario_id = $Beneficiario->id;
-            $cobrancaTitulo->parametros_bancos_id = $ParametrosBancos->id;
-            $cobrancaTitulo->cliente_id =   $Cliente->id;
-            $cobrancaTitulo->valor = $request->valor;
-            $cobrancaTitulo->DataDoProces = date('Y-m-d H:i:s');
-            $cobrancaTitulo->data_vencimento = $request->data_vencimento;
-            $cobrancaTitulo->emissao_tipo = 1; /// tipo 1 = boletos simples 2 carne
-            $cobrancaTitulo->bancos_modulos_id = $ParametrosBancos->bancos_modulos_id;
-            $cobrancaTitulo->status = 'new';
-            $cobrancaTitulo->tipo = 1;
-            $cobrancaTitulo->cobranca_id = $request->cobranca_id;
-            $cobrancaTitulo->identificacaoboletoempresa = $request->identificacaoboletoempresa;
-            $cobrancaTitulo->save();
-
-
-
+                    ],
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            // Registra um erro no log e retorna uma resposta de erro
+            Log::error('Erro ao processar GetCreate: ' . $e->getMessage());
             return response()->json([
-                'EventoBoleto' => [
-                    'codigo' => 200,
-                    'data' =>  $cobrancaTitulo,
-
+                'Resposta' => [
+                    'codigo' => 500,
+                    'mensagem' => 'Ocorreu um erro no servidor.',
                 ],
-            ], 200);
+            ], 500);
         }
     }
 }
