@@ -19,15 +19,13 @@ class ControllerCreateCobranca extends Controller
      * Contato: salvadorbba@gmail.com
      * Data: data_de_criacao
      * Descrição: Descrição breve do propósito deste arquivo.
-     */
-
-
-
-    /**
-     * Show the form for creating a new resource.
+     * Método para criar uma nova cobrança.
      *
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
+
+
     public function create(Request $request)
     {
 
@@ -69,7 +67,6 @@ class ControllerCreateCobranca extends Controller
         } else {
 
             $cobrancaTitulo = new CobrancaTitulo();
-            // Preencha os atributos do modelo com base nos dados recebidos do formulário
             $cobrancaTitulo->beneficiario_id = $Beneficiario->id;
             $cobrancaTitulo->parametros_bancos_id = $ParametrosBancos->id;
             $cobrancaTitulo->cliente_id =   $Cliente->id;
@@ -82,8 +79,6 @@ class ControllerCreateCobranca extends Controller
             $cobrancaTitulo->tipo = 1;
             $cobrancaTitulo->cobranca_id = $request->cobranca_id;
             $cobrancaTitulo->identificacaoboletoempresa = $request->identificacaoboletoempresa;
-            //   $cobrancaTitulo->seunumero = $ultimoNumero;
-            // Salve o novo registro no banco de dados
             $cobrancaTitulo->save();
 
 

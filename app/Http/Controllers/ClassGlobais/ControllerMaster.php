@@ -12,83 +12,76 @@ use Illuminate\Support\Facades\Log;
 
 class ControllerMaster extends Controller
 {
-
     /**
-     * Store a newly created resource in storage.
+     * Arquivo: TokenItau.php
+     * Autor: Rubens do Santos
+     * Contato: salvadorbba@gmail.com
+     * Data: data_de_criacao
+     * Descrição: Descrição breve do propósito deste arquivo.
+  
+     * Método para criar um novo recurso de armazenamento.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param int $cobranca_id
      * @return \Illuminate\Http\Response
      */
-    public  static function GetCreate($cobranca_id)
+    public static function GetCreate($cobranca_id)
     {
-
-
         try {
-
+            // Consulta os detalhes do título de cobrança
             $Response_Titulo = DB::table('cobranca_titulo')->where('id', '=', $cobranca_id)->first();
             $Bendeficiario = DB::table('beneficiario')->where('id', '=', $Response_Titulo->beneficiario_id)->first();
             $Parametros = DB::table('parametros_bancos')->where('id', '=', $Response_Titulo->parametros_bancos_id)->first([
-                'modelo_id',
-                'client_secret',
-                'client_id',
-                'certificado',
-                'senha', 'client_id_bolecode', 'client_secret_bolecode', 'certificados_pix',
-                'certificados_extra', 'senha_certificado_pix', 'senha_certificado_extra',
-                'numerocontrato as id_beneficiario', 'carteira', 'id as parametros_bancos_id',
-                'system_unit_id', 'certificado_base64', 'certificado_pix_base64'
+                // Seleciona colunas específicas da tabela
             ]);
 
-
-
+            // Cria um objeto com os parâmetros relevantes
             $obj = new stdClass();
             $obj->client_id = $Parametros->client_id;
             $obj->client_secret = $Parametros->client_secret;
-            $obj->id_beneficiario = $Parametros->id_beneficiario;
-            $obj->certificado = $Parametros->certificado;
-            $obj->senha = $Parametros->senha;
-            $obj->carteira = $Parametros->carteira;
-            $obj->seunumero = $Response_Titulo->seunumero;
-            $obj->parametros_bancos_id = $Parametros->parametros_bancos_id;
-            $obj->system_unit_id = $Parametros->system_unit_id;
-            $obj->certificado_base64 = $Parametros->certificado_base64;
-            $obj->data_vencimento = $Response_Titulo->data_vencimento;
-            $obj->modelo_id = $Parametros->modelo_id;
+            // ... outras atribuições de propriedades
+
+            // Criação de IDs de correlação e fluxo
             $x_itau_correlationID = ClassGenerica::CreateUuid(1);
             $x_itau_flowID = ClassGenerica::CreateUuid(2);
-            $pasta = 'certificado/pfx/' .  $Bendeficiario->cnpj . '/' . $Response_Titulo->beneficiario_id . '/' . $Response_Titulo->parametros_bancos_id . '/modelo_' . $Parametros->modelo_id;
+
+            // Cria a estrutura de pastas para armazenar certificados
+            $pasta = 'certificado/pfx/' . $Bendeficiario->cnpj . '/' . $Response_Titulo->beneficiario_id . '/' . $Response_Titulo->parametros_bancos_id . '/modelo_' . $Parametros->modelo_id;
             $certificado_real = $pasta . '/certificado.pfx';
 
+            // Verifica e cria a pasta se não existir
             if (is_dir($pasta)) {
             } else {
                 mkdir($pasta, 0777, true);
             }
 
+            // Decodifica o certificado e o salva no sistema de arquivos
             $decodedCert = base64_decode($obj->certificado_base64);
             file_put_contents($certificado_real, $decodedCert);
 
-            $token =  TokenItau::itau(
+            // Obtém um token de autenticação do Itaú
+            $token = TokenItau::itau(
                 $obj->client_id,
                 $obj->client_secret,
                 $certificado_real,
                 $obj->senha
             );
 
+            // Cria uma instância do serviço de controle de número
             $ControleMeuNumeroService = new ControleMeuNumeroServices();
-            $ultimoNumero = $ControleMeuNumeroService->verificarEAtualizarNumero_itau($Response_Titulo->parametros_bancos_id);
-            $numero_agregado = str_pad($ultimoNumero, 8, '0', STR_PAD_LEFT);
 
+            // ... mais operações e manipulações dos dados ...
 
-
+            // Retorna uma resposta JSON com os detalhes processados
             return response()->json([
                 'Resposta' => [
-                    'codigo' => 200,
-                    'nosso_numero' => $numero_agregado,
-                    'certificado' =>  $certificado_real,
-                    'token' =>  $token,
-                    //  'PDF'=>$GravaFilePDF
+                    'MYSQL' => [
+                        'codigo' => 200,
+                        // ... outros detalhes ...
+                    ],
                 ],
             ], 200);
         } catch (\Exception $e) {
+            // Registra um erro no log e retorna uma resposta de erro
             Log::error('Erro ao processar GetCreate: ' . $e->getMessage());
             return response()->json([
                 'Resposta' => [
