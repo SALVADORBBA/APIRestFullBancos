@@ -17,3 +17,5 @@ yarn-error.log
 *.pfx
 .pfx
 /bd
+.sql
+*.sql
