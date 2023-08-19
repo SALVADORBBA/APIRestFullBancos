@@ -52,4 +52,4 @@ Licença
 A API do Itaú é um software de código aberto licenciado sob a licença MIT.
 
 Autor: Rubens dos Santos
-Contato: salvadorbba@gmail.com
+Contato: salvadorbba@gmail.com  / Whatsapp (71)99675-8056
