@@ -16,3 +16,4 @@ yarn-error.log
 /certificado/*.pfx
 *.pfx
 .pfx
+/bd
