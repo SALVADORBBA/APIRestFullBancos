@@ -7,8 +7,9 @@ Bem-vindo à API do Itaú para gerenciamento de boletos bancários. Esta API per
 ### Criação de Boleto
 Crie um novo boleto para um beneficiário com informações como valor, vencimento e identificação.
 
-**Endpoint:**
-
+**Importante Instalação via composer:**
+     *composer require mpdf/mpdf
+     *composer require picqer/php-barcode-generator   
 
 **Parâmetros:**
 - `valor` (decimal): O valor do boleto.
