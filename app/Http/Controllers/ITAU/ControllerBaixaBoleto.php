@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CobrancaTitulo;
 use Illuminate\Http\Request;
 
-class ControllerUpdate extends Controller
+class ControllerBaixaBoleto extends Controller
 {
 
     /**
@@ -17,23 +17,22 @@ class ControllerUpdate extends Controller
      * Contato: salvadorbba@gmail.com
      * Método para atualizar a data de vencimento de um boleto no sistema ITAU.
      *
-     * @param Request $request Os dados da requisição contendo o ID do boleto e a nova data de vencimento.
+     * @param Request $request Os dados da requisição contendo o ID do boletopara baixa.
      * @return \Illuminate\Http\JsonResponse Resposta JSON contendo o resultado da operação de atualização.
      */
 
-    public function update(Request $request)
+    public  function update(Request $request)
     {
 
         $obj = (object) ControllerMaster::GetCreate($request->id);
+
         $x_itau_correlationID = ClassGenerica::CreateUuid(1);
         $x_itau_flowID = ClassGenerica::CreateUuid(2);
         $id_boleto =   $obj->Parametros->id_beneficiario . $obj->Parametros->carteira . $obj->boleto->seunumero;
 
 
-        $url = 'https://api.itau.com.br/cash_management/v2/boletos/' . $id_boleto . '/data_vencimento';
-        $requestData = [
-            'data_vencimento' =>  $request->data_vencimento,
-        ];
+        $url = 'https://api.itau.com.br/cash_management/v2/boletos/' . $id_boleto . '/baixa';
+        $requestData = [];
 
         $headers = [
             'x-itau-apikey: ' . $obj->client_id,
@@ -85,10 +84,9 @@ class ControllerUpdate extends Controller
 
 
 
-
             $Cobranca = CobrancaTitulo::find($request->id);
             if ($Cobranca) {
-                $Cobranca->data_vencimento =  $request->data_vencimento;
+                $Cobranca->status = 'Solicitacao Baixa';
                 $Cobranca->save();
             }
 

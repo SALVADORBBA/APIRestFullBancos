@@ -24,7 +24,7 @@ class BoletoPrintStatico extends Controller
     /**
      * Display a listing of the resource.
      *composer require mpdf/mpdf
-     *composer require picqer/php-barcode-generator    BoletoPrintStatico::pdf();
+     *composer require picqer/php-barcode-generator   
      * 
      * @return \Illuminate\Http\Response
      */
@@ -467,7 +467,7 @@ class BoletoPrintStatico extends Controller
         $mpdf->Output($caminhoArquivo, Destination::FILE);
         $mpdf->Output($nomeArquivo, Destination::INLINE);
 
-        $Cobranca = CobrancaTitulo::find($cobranca_id);
+        $Cobranca = CobrancaTitulo::find($id);
         if ($Cobranca) {
             $Cobranca->caminho_boleto = $nomeArquivo;
             $Cobranca->save();
