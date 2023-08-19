@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MillEventosBoletos extends Model
+class EventosBoletos extends Model
 {
     protected $table = 'eventos_boletos';
 

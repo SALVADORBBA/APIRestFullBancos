@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BancosModulo;
 use App\Models\Beneficiario;
 use App\Models\Cliente;
 use Illuminate\Http\Request;
@@ -37,6 +38,49 @@ class CobrancaTituloController extends Controller
 
         // Realize a busca com paginação
         $titulos = CobrancaTitulo::where('status', $request->status)
+            ->paginate($itensPorPagina, ['*'], 'page', $pagina);
+
+        // Retorne os resultados como JSON
+        return response()->json($titulos);
+    }
+
+
+    public function GetBancosPage(Request $request)
+    {
+        // Defina a quantidade de itens por página
+        $itensPorPagina = $request->registros;
+        if (!isset($request->page)) {
+            $page = 1;
+        } else {
+            $page = $request->page;
+        }
+        // Verifique se foi fornecido um parâmetro de página na requisição
+        $pagina = $request->input('page', $page);
+
+        // Realize a busca com paginação
+        $titulos = BancosModulo::where('status', $request->status)
+            ->paginate($itensPorPagina, ['*'], 'page', $pagina);
+
+        // Retorne os resultados como JSON
+        return response()->json($titulos);
+    }
+
+
+
+    public function GetClientePage(Request $request)
+    {
+        // Defina a quantidade de itens por página
+        $itensPorPagina = $request->registros;
+        if (!isset($request->page)) {
+            $page = 1;
+        } else {
+            $page = $request->page;
+        }
+        // Verifique se foi fornecido um parâmetro de página na requisição
+        $pagina = $request->input('page', $page);
+
+        // Realize a busca com paginação
+        $titulos = Cliente::where('status', $request->status)
             ->paginate($itensPorPagina, ['*'], 'page', $pagina);
 
         // Retorne os resultados como JSON

@@ -5,8 +5,12 @@ namespace App\Http\Controllers\ITAU;
 use App\Http\Controllers\ClassGlobais\ClassGenerica;
 use App\Http\Controllers\ClassGlobais\ControllerMaster;
 use App\Http\Controllers\Controller;
+use App\Models\CobrancaTitulo;
+use App\Models\ControleMeuNumero;
+use App\Models\EventosBoletos;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
+use stdClass;
 
 class ControllerCreate extends Controller
 {
@@ -23,27 +27,28 @@ class ControllerCreate extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-
     {
 
-
-        return      $retorno = ControllerMaster::GetCreate($request->cobranca_id);
+        $obj = (object) ControllerMaster::GetCreate($request->id);
 
 
         $data = new stdClass();
 
         $data->data = new stdClass();
-        $data->data->etapa_processo_boleto = $request->etapa_processo_boleto;
+        $data->data->etapa_processo_boleto = $obj->boleto->etapa_processo_boleto;
         $data->data->codigo_canal_operacao = "API";
 
         $data->data->beneficiario = new stdClass();
-        $data->data->beneficiario->id_beneficiario = $obj->id_beneficiario;
+        $data->data->beneficiario->id_beneficiario = $obj->Parametros->id_beneficiario;
 
         $data->data->dado_boleto = new stdClass();
         $data->data->dado_boleto->descricao_instrumento_cobranca = "boleto";
         $data->data->dado_boleto->tipo_boleto = "a vista";
-        $data->data->dado_boleto->codigo_carteira = $result->global_2; /// carteira
-        $data->data->dado_boleto->valor_total_titulo = MillFunctionsClass::formatarValorItau($result->valor);
+        $data->data->dado_boleto->codigo_carteira = 109; /// carteira
+        $data->data->dado_boleto->valor_total_titulo = ClassGenerica::formatarValorItau($obj->boleto->valor);
+
+
+
 
         $data->data->dado_boleto->codigo_especie = "01";
         $data->data->dado_boleto->valor_abatimento = "000";
@@ -53,30 +58,32 @@ class ControllerCreate extends Controller
 
         $data->data->dado_boleto->pagador = new stdClass();
         $data->data->dado_boleto->pagador->pessoa = new stdClass();
-        $data->data->dado_boleto->pagador->pessoa->nome_pessoa = $result->nome;
+        $data->data->dado_boleto->pagador->pessoa->nome_pessoa = $obj->cliente->nome;
         $data->data->dado_boleto->pagador->pessoa->tipo_pessoa = new stdClass();
-        if (strlen($result->documento) === 14) {
+        if (strlen($obj->cliente->documento) === 14) {
             $data->data->dado_boleto->pagador->pessoa->tipo_pessoa->codigo_tipo_pessoa = "J";
-            $data->data->dado_boleto->pagador->pessoa->tipo_pessoa->numero_cadastro_nacional_pessoa_juridica = $result->documento;
+            $data->data->dado_boleto->pagador->pessoa->tipo_pessoa->numero_cadastro_nacional_pessoa_juridica =  $obj->cliente->documento;
         } else {
             $data->data->dado_boleto->pagador->pessoa->tipo_pessoa->codigo_tipo_pessoa = "F";
-            $data->data->dado_boleto->pagador->pessoa->tipo_pessoa->numero_cadastro_pessoa_fisica = $result->documento;
+            $data->data->dado_boleto->pagador->pessoa->tipo_pessoa->numero_cadastro_pessoa_fisica = $obj->cliente->documento;
         }
 
-        $endereco = MillFunctionsClass::limitarTexto($result->endereco, 40) . MillFunctionsClass::limitarTexto($result->numero_cliente, 5);
+
+        $endereco = ClassGenerica::limitarTexto($obj->cliente->endereco, 40) . ClassGenerica::limitarTexto($obj->cliente->numero_cliente, 5);
 
         $data->data->dado_boleto->pagador->endereco = new stdClass();
         $data->data->dado_boleto->pagador->endereco->nome_logradouro = $endereco;
-        $data->data->dado_boleto->pagador->endereco->nome_bairro = $result->bairro;
-        $data->data->dado_boleto->pagador->endereco->nome_cidade = $result->cidade;
-        $data->data->dado_boleto->pagador->endereco->sigla_UF = $result->uf;
-        $data->data->dado_boleto->pagador->endereco->numero_CEP = $result->cep;
+        $data->data->dado_boleto->pagador->endereco->nome_bairro = $obj->cliente->bairro;
+        $data->data->dado_boleto->pagador->endereco->nome_cidade = $obj->cliente->cidade;
+        $data->data->dado_boleto->pagador->endereco->sigla_UF = $obj->cliente->uf;
+        $data->data->dado_boleto->pagador->endereco->numero_CEP = $obj->cliente->cep;
+
 
         $data->data->dado_boleto->dados_individuais_boleto = array();
         $dados_individuais_boleto = new stdClass();
-        $dados_individuais_boleto->numero_nosso_numero = $numero_agregado;
-        $dados_individuais_boleto->data_vencimento = $obj->data_vencimento;
-        $dados_individuais_boleto->valor_titulo = MillFunctionsClass::formatarValorItau($result->valor);
+        $dados_individuais_boleto->numero_nosso_numero = $obj->numero_nosso_numero;
+        $dados_individuais_boleto->data_vencimento = $obj->boleto->data_vencimento;
+        $dados_individuais_boleto->valor_titulo = ClassGenerica::formatarValorItau($obj->boleto->valor);
         $dados_individuais_boleto->texto_uso_beneficiario = "2";
         $dados_individuais_boleto->texto_seu_numero = "2";
         $data->data->dado_boleto->dados_individuais_boleto[] = $dados_individuais_boleto;
@@ -89,12 +96,16 @@ class ControllerCreate extends Controller
         $data->data->dado_boleto->desconto_expresso = false;
 
 
+        $x_itau_correlationID = ClassGenerica::CreateUuid(1);
+        $x_itau_flowID = ClassGenerica::CreateUuid(2);
+
+
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://api.itau.com.br/cash_management/v2/boletos',
             CURLOPT_SSLCERTTYPE => 'P12',
-            CURLOPT_SSLCERT =>  $certificado_real,
+            CURLOPT_SSLCERT =>  $obj->certificado,
             CURLOPT_SSLCERTPASSWD => $obj->senha,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
@@ -109,7 +120,7 @@ class ControllerCreate extends Controller
                 'x-itau-correlationID: ' .   $x_itau_correlationID,
                 'x-itau-flowID: ' . $x_itau_flowID,
                 'Content-Type: application/json',
-                'Authorization: Bearer ' . $TokenItau,
+                'Authorization: Bearer ' . $obj->token,
             ),
         ));
 
@@ -121,9 +132,8 @@ class ControllerCreate extends Controller
 
         if (isset($response->data->dado_boleto->dados_individuais_boleto[0]->numero_linha_digitavel)) {
             $resultado = $response->data->dado_boleto->dados_individuais_boleto[0];
-            $registro = MillControleMeuNumero::where('mill_parametros_bancos_id', $result->mill_parametros_bancos_id)
-                ->where('ultimo_numero', $ultimoNumero)
-                ->where('system_unit_id', $result->system_unit_id)
+            $registro = ControleMeuNumero::where('parametros_bancos_id', $obj->boleto->parametros_bancos_id)
+                ->where('ultimo_numero', $obj->numero_nosso_numero)
                 ->first();
 
             if ($registro) {
@@ -131,38 +141,27 @@ class ControllerCreate extends Controller
                 $registro->save();
             }
 
-            // $resultado->numero_nosso_numero": "20000002",
-            // $resultado->data_vencimento": "2023-07-30",
-            // $resultado->valor_titulo": "00000000000119900",
-            // $resultado->texto_seu_numero": "2",
-            // $resultado->codigo_barras": "34199942700001199001092000000225729085083000",
-            // $resultado->numero_linha_digitavel": "34191092060000022572290850830002994270000119900",
-            // $resultado->texto_uso_beneficiario": "2"
+
             ################Salvar o evento no banco de dados####################
-            $evento = new MillEventosBoletos();
+            $evento = new EventosBoletos();
             // Preencher os campos do evento
             $evento->linhaDigitavel = $resultado->numero_linha_digitavel;
             $evento->codigoBarras = $resultado->codigo_barras;
-
-            $evento->mill_parametros_bancos_id = $result->mill_parametros_bancos_id;
-            $evento->system_unit_id = $result->system_unit_id;
-            $evento->mill_cobranca_titulo_id = $result->id;
-
-            $evento->seunumero = $numero_agregado;
-            $evento->numerocarteira = $result->global_2;
-
+            $evento->parametros_bancos_id = $obj->boleto->parametros_bancos_id;
+            $evento->cobranca_titulo_id = $obj->boleto->id;
+            $evento->seunumero = $obj->numero_nosso_numero;
+            $evento->numerocarteira = 109;
             $evento->numerocontratocobranca = $data->data->beneficiario->id_beneficiario;
-
             $evento->mensagem = 'Boleto Gerado com sucesso enviado para Banco do Itau';
             $evento->codigo = 200;
 
             $evento->save();
 
             $mensagemPadrao = $evento->mensagem;
-            $Cobranca = MillCobrancaTitulo::find($result->id);
+            $Cobranca = CobrancaTitulo::find($obj->boleto->id);
             if ($Cobranca) {
                 $Cobranca->status = 'Em aberto';
-                $Cobranca->seunumero = $numero_agregado;
+                $Cobranca->seunumero = $obj->numero_nosso_numero;
                 $Cobranca->linhadigitavel = $evento->linhaDigitavel;
                 $Cobranca->codigobarras = $evento->codigoBarras;
                 $Cobranca->modelo = 1;
@@ -172,27 +171,28 @@ class ControllerCreate extends Controller
                 $Cobranca->save();
             }
 
-            BoletoCodePIX::store($result->id);
 
-            sleep(1);
+
+            BoletoPrintStatico::pdf($obj->boleto->id);
+
 
             return response()->json([
-                'EventoBoleto' => [
+                'Boleto' => [
                     'codigo' => 200,
-                    'mensagem' => $mensagemPadrao,
-                    'data' => $response,
-                    'id' => $evento->id,
+                    // 'mensagem' => $mensagemPadrao,
+                    // 'data' => $response,
+                    // 'id' => $evento->id,
                     //  'PDF'=>$GravaFilePDF
                 ],
             ], 200);
         } else {
 
             return response()->json([
-                'EventoBoleto' => [
-                    'codigo' => 404,
+                'Boleto' => [
+                    'codigo' => 204,
 
                 ],
-            ], 404);
+            ], 204);
         }
     }
 }

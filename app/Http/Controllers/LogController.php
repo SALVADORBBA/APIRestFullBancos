@@ -12,8 +12,17 @@ class LogController extends Controller
     public function showLogs()
     {
         $logFilePath = storage_path('logs/laravel.log');
-        $logs = file_get_contents($logFilePath);
+        $logContents = file_get_contents($logFilePath);
 
-        return view('logs', ['logs' => explode(PHP_EOL, $logs)]);
+        $logs = explode(PHP_EOL, $logContents);
+        $infoLogs = [];
+
+        foreach ($logs as $log) {
+            if (strpos($log, 'local.INFO') !== false) {
+                $infoLogs[] = $log;
+            }
+        }
+
+        return view('logs', ['logs' => $infoLogs]);
     }
 }

@@ -5,6 +5,10 @@ namespace App\Http\Controllers\ClassGlobais;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ITAU\TokenItau;
 use App\Http\Controllers\ServicosDelicados\ControleMeuNumeroService;
+use App\Models\Beneficiario;
+use App\Models\Cliente;
+use App\Models\CobrancaTitulo;
+use App\Models\ParametrosBancos;
 use Illuminate\Http\Request;
 use stdClass;
 use Illuminate\Support\Facades\DB;
@@ -24,64 +28,123 @@ class ControllerMaster extends Controller
      * @param int $cobranca_id
      * @return \Illuminate\Http\Response
      */
-    public static function GetCreate($cobranca_id)
-    {
-        try {
-            // Consulta os detalhes do título de cobrança
-            $Response_Titulo = DB::table('cobranca_titulo')->where('id', '=', $cobranca_id)->first();
-            $Bendeficiario = DB::table('beneficiario')->where('id', '=', $Response_Titulo->beneficiario_id)->first();
-            $Parametros = DB::table('parametros_bancos')->where('id', '=', $Response_Titulo->parametros_bancos_id)->first([
-                // Seleciona colunas específicas da tabela
-            ]);
 
-            // Cria um objeto com os parâmetros relevantes
+
+    public  static function GetCreate($cobranca_id)
+    {
+
+
+        try {
+
+
+            $Response_Titulo = CobrancaTitulo::find($cobranca_id);
+            $Bendeficiario = Beneficiario::find($Response_Titulo->beneficiario_id);
+            $Cliente = Cliente::find($Response_Titulo->cliente_id);
+            $Parametros = ParametrosBancos::select([
+                'modelo_id',
+                'client_secret',
+                'client_id',
+                'certificado',
+                'senha',
+                'client_id_bolecode',
+                'client_secret_bolecode',
+                'certificados_pix',
+                'certificados_extra',
+                'senha_certificado_pix',
+                'senha_certificado_extra',
+                'numerocontrato as id_beneficiario',
+                'carteira',
+                'id as parametros_bancos_id',
+                'system_unit_id',
+                'certificado_base64',
+                'certificado_pix_base64'
+            ])
+                ->where('id', '=', $Response_Titulo->parametros_bancos_id)
+                ->first();
+
+
             $obj = new stdClass();
             $obj->client_id = $Parametros->client_id;
             $obj->client_secret = $Parametros->client_secret;
-            // ... outras atribuições de propriedades
+            $obj->id_beneficiario = $Parametros->id_beneficiario;
+            $obj->certificado = $Parametros->certificado;
+            $obj->senha = $Parametros->senha;
+            $obj->carteira = $Parametros->carteira;
+            $obj->seunumero = $Response_Titulo->seunumero;
+            $obj->parametros_bancos_id = $Parametros->parametros_bancos_id;
+            $obj->system_unit_id = $Parametros->system_unit_id;
+            $obj->certificado_base64 = $Parametros->certificado_base64;
+            $obj->data_vencimento = $Response_Titulo->data_vencimento;
+            $obj->modelo_id = $Parametros->modelo_id;
 
-            // Criação de IDs de correlação e fluxo
-            $x_itau_correlationID = ClassGenerica::CreateUuid(1);
-            $x_itau_flowID = ClassGenerica::CreateUuid(2);
 
-            // Cria a estrutura de pastas para armazenar certificados
-            $pasta = 'certificado/pfx/' . $Bendeficiario->cnpj . '/' . $Response_Titulo->beneficiario_id . '/' . $Response_Titulo->parametros_bancos_id . '/modelo_' . $Parametros->modelo_id;
+            $obj->boleto = new stdClass();
+
+            $obj->boleto =  $Response_Titulo;
+
+            $obj->cliente = new stdClass();
+
+            $obj->cliente =  $Cliente;
+
+            $obj->Bendeficiario = new stdClass();
+
+            $obj->Bendeficiario =  $Bendeficiario;
+
+            $obj_seguimentado = new stdClass();
+            $obj_seguimentado->cliente = $obj->cliente;
+            $obj_seguimentado->Bendeficiario = $obj->Bendeficiario;
+            $obj_seguimentado->boleto = $obj->boleto;
+
+
+
+            $pasta = 'certificado/pfx/' .  $Bendeficiario->cnpj . '/' . $Response_Titulo->beneficiario_id . '/' . $Response_Titulo->parametros_bancos_id . '/modelo_' . $Parametros->modelo_id;
             $certificado_real = $pasta . '/certificado.pfx';
 
-            // Verifica e cria a pasta se não existir
             if (is_dir($pasta)) {
             } else {
                 mkdir($pasta, 0777, true);
             }
 
-            // Decodifica o certificado e o salva no sistema de arquivos
             $decodedCert = base64_decode($obj->certificado_base64);
             file_put_contents($certificado_real, $decodedCert);
 
-            // Obtém um token de autenticação do Itaú
-            $token = TokenItau::itau(
+            $token =  TokenItau::itau(
                 $obj->client_id,
                 $obj->client_secret,
                 $certificado_real,
                 $obj->senha
             );
 
-            // Cria uma instância do serviço de controle de número
             $ControleMeuNumeroService = new ControleMeuNumeroServices();
+            $ultimoNumero = $ControleMeuNumeroService->verificarEAtualizarNumero_itau($Response_Titulo->parametros_bancos_id);
+            $numero_agregado = str_pad($ultimoNumero, 8, '0', STR_PAD_LEFT);
 
-            // ... mais operações e manipulações dos dados ...
 
-            // Retorna uma resposta JSON com os detalhes processados
-            return response()->json([
-                'Resposta' => [
-                    'MYSQL' => [
-                        'codigo' => 200,
-                        // ... outros detalhes ...
-                    ],
-                ],
-            ], 200);
+            $Cobranca = new stdClass();
+            $Cobranca->id = $Response_Titulo->id;
+            $Cobranca->vencimento = $Response_Titulo->data_vencimento;
+            $Cobranca->valor = $Response_Titulo->valor;
+            $Cobranca->parametros_bancos_id = $Response_Titulo->parametros_bancos_id;
+            $Cobranca->identificacaoboletoempresa = $Response_Titulo->identificacaoboletoempresa;
+            $Cobranca->cobranca_id = $Response_Titulo->cobranca_id;
+
+
+
+
+            $obj_seguimentado = new stdClass();
+            $obj_seguimentado->cliente = $obj->cliente;
+            $obj_seguimentado->Bendeficiario = $obj->Bendeficiario;
+            $obj_seguimentado->boleto = $obj->boleto;
+            $obj_seguimentado->token = $token;
+            $obj_seguimentado->numero_nosso_numero =   $numero_agregado;
+            $obj_seguimentado->Parametros =  $Parametros;
+            $obj_seguimentado->certificado =  $certificado_real;
+            $obj_seguimentado->senha =   $obj->senha;
+            $obj_seguimentado->client_id =   $obj->client_id;
+            $obj_seguimentado->client_secret =   $obj->client_secret;
+
+            return     $obj_seguimentado;
         } catch (\Exception $e) {
-            // Registra um erro no log e retorna uma resposta de erro
             Log::error('Erro ao processar GetCreate: ' . $e->getMessage());
             return response()->json([
                 'Resposta' => [
