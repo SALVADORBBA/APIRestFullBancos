@@ -1,0 +1,528 @@
+{
+	"info": {
+		"_postman_id": "2742c95b-5e34-4cb1-9af3-48d1ef4ab500",
+		"name": "Projeto Banco Itau",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8200460",
+		"_collection_link": "https://crimson-station-558433.postman.co/workspace/MODELO-ITAU~aafa4d37-c759-4fe9-80f1-364b4f368f64/collection/8200460-2742c95b-5e34-4cb1-9af3-48d1ef4ab500?action=share&source=collection_link&creator=8200460"
+	},
+	"item": [
+		{
+			"name": "01- Criar  Cobrança",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "cliente_id",
+							"value": "50",
+							"description": "(INT)",
+							"type": "text"
+						},
+						{
+							"key": "parametros_bancos_id",
+							"value": "9",
+							"description": "(INT)",
+							"type": "text"
+						},
+						{
+							"key": "valor",
+							"value": "1.00",
+							"description": "VALOR (DECIMAL) 10.00",
+							"type": "text"
+						},
+						{
+							"key": "data_vencimento",
+							"value": "2023-11-09",
+							"description": "FORMATO YYYY-MM-DD (DATE) 2023-08-10",
+							"type": "text"
+						},
+						{
+							"key": "identificacaoboletoempresa",
+							"value": "100001",
+							"description": "indentificação do boleto interno (INT) (123456)",
+							"type": "text"
+						},
+						{
+							"key": "cobranca_id",
+							"value": "200001",
+							"description": "indentificação do boleto (INT) (123456)",
+							"type": "text"
+						},
+						{
+							"key": "brute_force",
+							"value": "true",
+							"description": "BOOLEAN (true ou false)  Após essa conversão, a variável $bruteForce conterá o valor resultante como um booleano. Portanto, a verificação subsequente if ($bruteForce === false) verifica se o valor convertido é false, indicando que a validação deve ser aplicada. Se o valor for true, a segunda parte do código será executada.",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/Cobranca/Create",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"Cobranca",
+						"Create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02- Criar Boleto",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "28",
+							"type": "text"
+						},
+						{
+							"key": "tapa_processo_boleto",
+							"value": "validacao",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/itau/Create",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"itau",
+						"Create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03- Buscar Boleto Simples",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "04- Prorrogar Data Vencimento",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "id",
+							"value": "32",
+							"type": "text"
+						},
+						{
+							"key": "data_vencimento",
+							"value": "2023-08-30",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/itau/UpdateDate",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"itau",
+						"UpdateDate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "05- Baixar Boleto",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "id",
+						"value": "34",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "34",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/itau/Baixa",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"itau",
+						"Baixa"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "06- Imprimir Boleto",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/itau/Print?id=34",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"itau",
+						"Print"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "34"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "07- Test Fuction",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "08- LOGS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/logs",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"logs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "09-Buscar Boletos Page",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "registros",
+							"value": "5",
+							"description": "quantidade de registro pagina",
+							"type": "text"
+						},
+						{
+							"key": "status",
+							"value": "Processado",
+							"description": "status  Processado / new / Em aberto / Baixada",
+							"type": "text"
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"description": "pagina busca",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/BuscarBoleto",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"BuscarBoleto"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "10-Buscar Bancos Page",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "registros",
+							"value": "10",
+							"description": "quantidade de registro pagina",
+							"type": "text"
+						},
+						{
+							"key": "status",
+							"value": "1",
+							"description": "status ",
+							"type": "text"
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"description": "pagina busca",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/BuscarBanco",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"BuscarBanco"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "11-Buscar Clientes Page",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "registros",
+							"value": "10",
+							"description": "quantidade de registro pagina",
+							"type": "text"
+						},
+						{
+							"key": "status",
+							"value": "2",
+							"description": "status ",
+							"type": "text"
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"description": "pagina busca",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/BuscarCliente",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"BuscarCliente"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "12-Buscar Boletos One",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "31",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/BuscarOne",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"BuscarOne"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "13-Buscar  Cliente",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "50",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/Cliente",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"Cliente"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "14-Buscar Beneficiario",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "7",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/Beneficiario",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"Beneficiario"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
