@@ -49,7 +49,7 @@ Vulnerabilidades de Segurança
 Se você descobrir uma vulnerabilidade de segurança na API , por favor, envie um e-mail para salvadorbba@gmail.com. Todas as vulnerabilidades de segurança serão tratadas prontamente.
 
 Licença
-A API do Itaú é um software de código aberto licenciado sob a licença MIT.
+A API de comunicação é um software de código aberto licenciado sob a licença MIT.
 
 Autor: Rubens dos Santos
 Contato: salvadorbba@gmail.com  / Whatsapp (71)99675-8056
