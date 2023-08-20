@@ -18,7 +18,20 @@ use stdClass;
 
 class ControllerSandEmail extends Controller
 {
-
+    /**
+     * Arquivo: ControllerSandEmail.php
+     * Autor: Rubens do Santos
+     * Contato: salvadorbba@gmail.com
+     * Data: data_de_criacao
+     * Descrição: Descrição breve do propósito deste arquivo.
+  
+     * Envia email com anexo.
+     *  TokenItau;;itau
+     * @param int $id   O ID da cobrança.
+   
+     *
+     * @return string|false O token de acesso se a autenticação for bem-sucedida, caso contrário, uma mensagem de erro ou false em caso de falha.
+     */
     public function index(Request $request)
     {
 
