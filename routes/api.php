@@ -7,6 +7,7 @@ use App\Http\Controllers\Itau\BoletoITAU;
 use App\Http\Controllers\ITAU\ControllerBaixaBoleto;
 use App\Http\Controllers\ITAU\ControllerBuscaFull;
 use App\Http\Controllers\ITAU\ControllerCreate;
+use App\Http\Controllers\ITAU\ControllerSimulador;
 use App\Http\Controllers\ITAU\ControllerUpdate;
 use App\Http\Controllers\LogController;
 use Illuminate\Http\Request;
@@ -38,6 +39,7 @@ Route::put('/itau/UpdateDate', [ControllerUpdate::class, 'update']);
 
 Route::post('/itau/Baixa', [ControllerBaixaBoleto::class, 'update']);
 Route::post('/itau/SeachFull', [ControllerBuscaFull::class, 'index']);
+Route::post('/itau/Simulador', [ControllerSimulador::class, 'index']);
 
 
 /// rotas globais

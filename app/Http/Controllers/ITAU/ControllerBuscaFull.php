@@ -102,12 +102,13 @@ class ControllerBuscaFull extends Controller
                         $numHistoricos++; // Incrementa o contador
                     }
                 }
-
+                return $response;
                 return response()->json(
                     [
                         'Metodo' => 'POST',
                         'Arquivo' => 'ControllerBuscaFull',
                         'registros_afetados' => $numHistoricos,
+                        'data' => $response
                     ],
                     201
                 );
