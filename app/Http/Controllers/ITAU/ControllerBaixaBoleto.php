@@ -12,7 +12,7 @@ class ControllerBaixaBoleto extends Controller
 {
 
     /**
-     * Arquivo: ControllerCreate.php
+     * Arquivo: ControllerBaixaBoleto.php
      * Autor: Rubens do Santos
      * Contato: salvadorbba@gmail.com
      * Método para atualizar a data de vencimento de um boleto no sistema ITAU.
