@@ -29,7 +29,7 @@ class ControllerSandEmail extends Controller
      *  TokenItau;;itau
      * @param int $id   O ID da cobrança.
    
-     *
+     * 
      * @return string|false O token de acesso se a autenticação for bem-sucedida, caso contrário, uma mensagem de erro ou false em caso de falha.
      */
     public function index(Request $request)
