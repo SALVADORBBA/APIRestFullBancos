@@ -3,10 +3,11 @@
 use App\Http\Controllers\ClassGlobais\ControllerMaster;
 use App\Http\Controllers\CobrancaTituloController;
 use App\Http\Controllers\ControllerCreateCobranca;
-use App\Http\Controllers\Itau\BoletoITAU;
+use App\Http\Controllers\ITAU\BoletoITAU;
 use App\Http\Controllers\ITAU\ControllerBaixaBoleto;
 use App\Http\Controllers\ITAU\ControllerBuscaFull;
 use App\Http\Controllers\ITAU\ControllerCreate;
+use App\Http\Controllers\ControllerSandEmail;
 use App\Http\Controllers\ITAU\ControllerSimulador;
 use App\Http\Controllers\ITAU\ControllerUpdate;
 use App\Http\Controllers\LogController;
@@ -32,7 +33,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::post('/itau/master', [ControllerMaster::class, 'GetCreate']);
-Route::post('/itau/Create', [ControllerCreate::class, 'store']);
+Route::post('/itau/CreateBoleto', [ControllerCreate::class, 'store']);
 Route::post('/Cobranca/Create', [ControllerCreateCobranca::class, 'create']);
 Route::get('/itau/Print', [BoletoITAU::class, 'pdf']);
 Route::put('/itau/UpdateDate', [ControllerUpdate::class, 'update']);
@@ -40,7 +41,7 @@ Route::put('/itau/UpdateDate', [ControllerUpdate::class, 'update']);
 Route::post('/itau/Baixa', [ControllerBaixaBoleto::class, 'update']);
 Route::post('/itau/SeachFull', [ControllerBuscaFull::class, 'index']);
 Route::post('/itau/Simulador', [ControllerSimulador::class, 'index']);
-
+Route::post('/itau/SendEmail', [ControllerSandEmail::class, 'index']);
 
 /// rotas globais
 Route::post('/BuscarBoleto', [CobrancaTituloController::class, 'GetBoletoPage']);
