@@ -130,7 +130,6 @@ class ControllerMaster extends Controller
 
 
 
-
             $obj_seguimentado = new stdClass();
             $obj_seguimentado->cliente = $obj->cliente;
             $obj_seguimentado->Bendeficiario = $obj->Bendeficiario;
