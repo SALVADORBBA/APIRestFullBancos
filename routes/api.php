@@ -43,7 +43,7 @@ Route::post('/itau/SeachFull', [ControllerBuscaFull::class, 'index']);
 Route::post('/itau/Simulador', [ControllerSimulador::class, 'index']);
 Route::post('/itau/SendEmail', [ControllerSandEmail::class, 'index']);
 
-/// rotas globais
+
 Route::post('/BuscarBoleto', [CobrancaTituloController::class, 'GetBoletoPage']);
 Route::post('/BuscarBanco', [CobrancaTituloController::class, 'GetBancosPage']);
 Route::post('/BuscarCliente', [CobrancaTituloController::class, 'GetClientePage']);

@@ -78,6 +78,11 @@ class ControllerMaster extends Controller
             $obj->modelo_id = $Parametros->modelo_id;
 
 
+
+
+
+
+
             $obj->boleto = new stdClass();
 
             $obj->boleto =  $Response_Titulo;

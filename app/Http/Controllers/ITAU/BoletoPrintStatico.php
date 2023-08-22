@@ -455,11 +455,10 @@ class BoletoPrintStatico extends Controller
 
         $mpdf->showWatermarkText = true;
         $mpdf->WriteHTML($html);
-        $senha = 1;
+        $senha = 2;
 
-        if ($senha == 2) {
-            $mpdf->SetProtection(array(), 'UserPassword', 123); //habilitar senha
-        }
+
+        $mpdf->SetProtection(array(), 'UserPassword', 123); //habilitar senha
 
         $mpdf->SetFooter($creditos);
 
