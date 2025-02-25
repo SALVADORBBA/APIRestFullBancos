@@ -37,9 +37,11 @@ class ControllerMaster extends Controller
         try {
 
 
-            $Response_Titulo = CobrancaTitulo::find($cobranca_id);
-            $Bendeficiario = Beneficiario::find($Response_Titulo->beneficiario_id);
+            $Response_Titulo = CobrancaTitulo::find($cobranca_id);  // cobrança / titulo
+            $Beneficiario = Beneficiario::find($Response_Titulo->beneficiario_id);
             $Cliente = Cliente::find($Response_Titulo->cliente_id);
+
+
             $Parametros = ParametrosBancos::select([
                 'modelo_id',
                 'client_secret',
@@ -62,7 +64,6 @@ class ControllerMaster extends Controller
                 ->where('id', '=', $Response_Titulo->parametros_bancos_id)
                 ->first();
 
-
             $obj = new stdClass();
             $obj->client_id = $Parametros->client_id;
             $obj->client_secret = $Parametros->client_secret;
@@ -79,30 +80,23 @@ class ControllerMaster extends Controller
 
 
 
-
-
-
-
             $obj->boleto = new stdClass();
-
             $obj->boleto =  $Response_Titulo;
-
             $obj->cliente = new stdClass();
-
             $obj->cliente =  $Cliente;
-
             $obj->Bendeficiario = new stdClass();
-
-            $obj->Bendeficiario =  $Bendeficiario;
-
+            $obj->Bendeficiario =  $Beneficiario;
             $obj_seguimentado = new stdClass();
             $obj_seguimentado->cliente = $obj->cliente;
             $obj_seguimentado->Bendeficiario = $obj->Bendeficiario;
             $obj_seguimentado->boleto = $obj->boleto;
 
 
-
-            $pasta = 'certificado/pfx/' .  $Bendeficiario->cnpj . '/' . $Response_Titulo->beneficiario_id . '/' . $Response_Titulo->parametros_bancos_id . '/modelo_' . $Parametros->modelo_id;
+            /** 
+             *responsavel em criar o arquivo pfx 
+           
+             */
+            $pasta = 'certificado/pfx/' .  $Beneficiario->cnpj . '/' . $Response_Titulo->beneficiario_id . '/' . $Response_Titulo->parametros_bancos_id . '/modelo_' . $Parametros->modelo_id;
             $certificado_real = $pasta . '/certificado.pfx';
 
             if (is_dir($pasta)) {
@@ -113,6 +107,12 @@ class ControllerMaster extends Controller
             $decodedCert = base64_decode($obj->certificado_base64);
             file_put_contents($certificado_real, $decodedCert);
 
+            /** 
+             *responsavel em criar o arquivo pfx 
+           
+             */
+
+            ################# gera token ##############
             $token =  TokenItau::itau(
                 $obj->client_id,
                 $obj->client_secret,
@@ -137,7 +137,7 @@ class ControllerMaster extends Controller
 
             $obj_seguimentado = new stdClass();
             $obj_seguimentado->cliente = $obj->cliente;
-            $obj_seguimentado->Bendeficiario = $obj->Bendeficiario;
+            $obj_seguimentado->Beneficiario = $obj->Bendeficiario;
             $obj_seguimentado->boleto = $obj->boleto;
             $obj_seguimentado->token = $token;
             $obj_seguimentado->numero_nosso_numero =   $numero_agregado;

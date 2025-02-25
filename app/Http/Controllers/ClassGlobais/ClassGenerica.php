@@ -37,7 +37,20 @@ class ClassGenerica extends Controller
     {
         return preg_replace('/[^a-zA-Z0-9\s]/', '', $value);
     }
+  public static function TrataDoc($valor)
+  {
+    $antes = ['+', '.', '-', '/', '(', ')', ' '];
+    $depos = ['', '', '', '', '', '', ''];
+    return str_replace($antes, $depos, $valor);
+  }
+  
+  
+  
+  
+   
 
+  
+  
     public static function removerAcentosLetras($string)
     {
         $acentos = array(
@@ -512,5 +525,19 @@ class ClassGenerica extends Controller
         // Exibir a imagem cortada
 
         return  $cropped_image_path;
+    }
+
+
+    public static function pfxToBase64($pfxFilePath)
+    {
+
+        // Carrega o conteúdo do arquivo .pfx
+        $pfxData = file_get_contents($pfxFilePath);
+
+        // Converte o arquivo .pfx para base64
+        $base64Data = base64_encode($pfxData);
+
+
+        return  $base64Data;
     }
 }
